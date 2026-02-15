@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Connexion - Bibliothèque</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3em;
+    margin-bottom: 30px;
+    color: #6B1E7A;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.15);
+    animation: floatTitle 4s ease-in-out infinite alternate;
+}
+
+@keyframes floatTitle {
+    0% { transform: translateY(0px) rotateZ(0deg); }
+    100% { transform: translateY(-15px) rotateZ(3deg); }
+}
+
+form {
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 350px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(145deg, #6B1E7A, #A02FB3);
+    color: white;
+    font-weight: 700;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #A02FB3, 0 0 25px #6B1E7A;
+}
+
+p.link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+p.link a {
+    color: #6B1E7A;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+p.link a:hover {
+    color: #A02FB3;
+    text-shadow: 0 0 8px #A02FB3;
+}
+
+/* Sakura animation */
+.sakura {
+    position: absolute;
+    top: -50px;
+    font-size: 2em;
+    animation: fall linear infinite;
+    pointer-events: none;
+}
+
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg) scale(0.5); opacity:0; }
+    10% { opacity:1; }
+    100% { transform: translateY(100vh) rotate(360deg) scale(1); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<h1>🌸 Connexion 🌸</h1>
+
+<form method="POST" action="{{ url_for('main.login') }}">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="mot_de_passe" placeholder="Mot de passe" required>
+    <button type="submit">Se connecter</button>
+    <p class="link">Pas encore inscrit ? <a href="{{ url_for('main.register') }}">Créer un compte</a></p>
+</form>
+
+<script>
+const colors = ["🌸", "🌺", "💮"];
+function createSakura() {
+    const sakura = document.createElement("div");
+    sakura.classList.add("sakura");
+    sakura.style.left = Math.random() * window.innerWidth + "px";
+    sakura.style.fontSize = (20 + Math.random()*30) + "px";
+    sakura.textContent = colors[Math.floor(Math.random()*colors.length)];
+    sakura.style.animationDuration = (8 + Math.random()*5) + "s";
+    document.body.appendChild(sakura);
+    setTimeout(() => sakura.remove(), 13000);
+}
+setInterval(createSakura, 400);
+</script>
+
+</body>
+</html>

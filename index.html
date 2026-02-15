@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Accueil - Bibliothèque </title>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Police futuriste -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Orbitron',sans-serif;
+    min-height:100vh;
+    display:flex;
+    padding-left:60px;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(0,255,255,0.08), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255,0,100,0.08), transparent 40%),
+        linear-gradient(135deg,#120014,#2b001c,#120014);
+    color:#fff;
+    overflow:hidden;
+}
+
+/* ---- IMAGE LIVRES ARRIÈRE-PLAN ---- */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: url('https://images.unsplash.com/photo-1512820790803-83ca734da794') no-repeat right center;
+    background-size: contain;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ---- CONTAINER ---- */
+.container{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    height:100vh;
+    gap:30px;
+    z-index:2;
+    position:relative;
+}
+
+/* ---- TITRE IA ---- */
+h1{
+    font-size:3em;
+    margin-bottom:20px;
+    color:#ff4fa3;
+    text-shadow:0 0 15px #ff4fa3,0 0 35px #8a2be2;
+}
+
+/* ---- SÉPARATEUR ---- */
+.separator-title{
+    width:300px;
+    height:3px;
+    background:linear-gradient(90deg,transparent,#00ffff,transparent);
+    margin-bottom:40px;
+}
+
+/* ---- MENU ---- */
+ul{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:40px; /* ESPACE ENTRE LES BOUTONS */
+    width:360px;
+}
+
+/* ---- LI ---- */
+li{
+    position:relative;
+}
+
+/* ---- LIGNE ENTRE BOUTONS ---- */
+li::after{
+    content:"";
+    position:absolute;
+    left:20px;
+    right:20px;
+    bottom:-20px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+    pointer-events: none; /* ✅ PERMET AUX CLICS DE PASSER */
+}
+
+/* ---- BOUTONS ---- */
+a{
+    display:block;
+    position:relative;
+    padding:30px 30px 30px 85px;
+    border-radius:22px;
+    text-decoration:none;
+    color:#fff;
+    font-size:1.25em;
+    font-weight:600;
+    background: linear-gradient(145deg,#1b0012,#2f001f);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:
+        inset 0 0 18px rgba(255,0,100,0.18),
+        0 0 14px rgba(0,255,255,0.12);
+    transition:0.35s;
+    overflow:hidden;
+}
+
+/* ---- SIGNAL IA ---- */
+a::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(0,255,255,0.35),transparent);
+    transform:translateX(-100%);
+    transition:0.6s;
+}
+a:hover::after{transform:translateX(100%);}
+
+/* ---- HOVER ---- */
+a:hover{
+    transform:scale(1.06);
+    box-shadow:0 0 30px #ff4fa3,0 0 55px rgba(0,255,255,0.6);
+}
+
+/* ---- ICÔNES ---- */
+a i{
+    position:absolute;
+    left:28px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:2em;
+    animation:neuronFloat 3s infinite ease-in-out;
+}
+
+@keyframes neuronFloat{
+    0%{transform:translateY(-50%) scale(1);}
+    50%{transform:translateY(-65%) scale(1.15);}
+    100%{transform:translateY(-50%) scale(1);}
+}
+
+/* ---- COULEURS ---- */
+.books i{color:#00ffff;text-shadow:0 0 12px #00ffff;}
+.students i{color:#ff4fa3;text-shadow:0 0 12px #ff4fa3;}
+.teachers i{color:#8a2be2;text-shadow:0 0 12px #8a2be2;}
+.staff i{color:#00ff9c;text-shadow:0 0 12px #00ff9c;}
+.loans i{color:#ffd700;text-shadow:0 0 12px #ffd700;}
+
+/* ---- CANVAS IA ---- */
+canvas{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none; /* ✅ LES CLICS PASSENT */
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="neurons"></canvas>
+
+<div class="container">
+    <h1>Bibliothèque EPI-ALS</h1>
+    <div class="separator-title"></div>
+
+    <ul>
+        <li>
+            <a class="books" href="{{ url_for('main.liste_livres') }}">
+                <i class="fa-solid fa-book"></i>Gestion des livres
+            </a>
+        </li>
+
+        <li>
+            <a class="students" href="{{ url_for('main.liste_etudiants') }}">
+                <i class="fa-solid fa-user-graduate"></i>Gestion des étudiants
+            </a>
+        </li>
+
+        <li>
+            <a class="teachers" href="{{ url_for('main.liste_enseignants') }}">
+                <i class="fa-solid fa-chalkboard-user"></i>Gestion des enseignants
+            </a>
+        </li>
+
+        <li>
+            <a class="staff" href="{{ url_for('main.liste_bibliothecaires') }}">
+                <i class="fa-solid fa-user-gear"></i>Gestion des bibliothécaires
+            </a>
+        </li>
+
+        <li>
+            <a class="loans" href="{{ url_for('main.liste_emprunts') }}">
+                <i class="fa-solid fa-microchip"></i>Gestion des emprunts
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script>
+/* ---- RÉSEAU NEURONAL IA ---- */
+const canvas=document.getElementById("neurons");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+    canvas.width=innerWidth;
+    canvas.height=innerHeight;
+}
+resize();
+addEventListener("resize",resize);
+
+let nodes=[...Array(90)].map(() => ({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    vx:(Math.random()-0.5)*0.6,
+    vy:(Math.random()-0.5)*0.6
+}));
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    nodes.forEach(n=>{
+        n.x+=n.vx;n.y+=n.vy;
+        if(n.x<0||n.x>canvas.width)n.vx*=-1;
+        if(n.y<0||n.y>canvas.height)n.vy*=-1;
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,2,0,Math.PI*2);
+        ctx.fillStyle="#00ffff";
+        ctx.fill();
+        nodes.forEach(m=>{
+            let d=Math.hypot(n.x-m.x,n.y-m.y);
+            if(d<120){
+                ctx.strokeStyle="rgba(0,255,255,0.15)";
+                ctx.beginPath();
+                ctx.moveTo(n.x,n.y);
+                ctx.lineTo(m.x,m.y);
+                ctx.stroke();
+            }
+        });
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
