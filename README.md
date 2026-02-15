@@ -118,8 +118,9 @@ EPI-ALS_BIBLIO/
 
 ---
 
-## 7. Auteurs
+## 7. Auteur
 
 * Étudiant :  Assoumane Ada Izeinatou
 
 * Établissement : EPI Niger
+
