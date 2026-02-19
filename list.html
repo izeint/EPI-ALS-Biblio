@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Liste des livres - Bibliothèque IA</title>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Police IA -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Orbitron',sans-serif;
+    min-height:100vh;
+    padding:40px;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(0,255,255,0.08), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255,0,100,0.08), transparent 40%),
+        linear-gradient(135deg,#120014,#2b001c,#120014);
+    color:#fff;
+    overflow:hidden;
+}
+
+/* --- IMAGE LIVRES --- */
+body::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url('https://images.unsplash.com/photo-1512820790803-83ca734da794') no-repeat right center;
+    background-size:contain;
+    opacity:0.08;
+    pointer-events:none;
+}
+
+/* --- TITRE --- */
+h2{
+    text-align:center;
+    font-size:2.4em;
+    margin-bottom:30px;
+    color:#ff4fa3;
+    text-shadow:0 0 15px #ff4fa3,0 0 35px #8a2be2;
+    animation:floatTitle 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatTitle{
+    from{transform:translateY(0);}
+    to{transform:translateY(-10px);}
+}
+
+/* --- BOUTON AJOUT --- */
+.add{
+    display:inline-block;
+    margin-bottom:25px;
+    padding:14px 28px;
+    border-radius:30px;
+    background:linear-gradient(145deg,#ff4fa3,#8a2be2);
+    color:#fff;
+    text-decoration:none;
+    font-weight:700;
+    box-shadow:0 0 25px rgba(255,79,163,0.6);
+    transition:0.3s;
+}
+
+.add:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 40px rgba(0,255,255,0.7);
+}
+
+/* --- TABLE --- */
+table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 12px;
+    background:rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+    border-radius:20px;
+    box-shadow:0 0 35px rgba(0,255,255,0.15);
+}
+
+/* --- HEAD --- */
+th{
+    padding:16px;
+    background:linear-gradient(145deg,#1b0012,#2f001f);
+    color:#00ffff;
+    text-align:left;
+    font-size:1.05em;
+    text-shadow:0 0 10px #00ffff;
+}
+
+/* --- ROWS --- */
+td{
+    padding:14px 16px;
+}
+
+tr{
+    background:rgba(255,255,255,0.06);
+    transition:0.3s;
+}
+
+tr:hover{
+    transform:scale(1.02);
+    box-shadow:0 0 25px rgba(255,79,163,0.4);
+    background:rgba(255,255,255,0.12);
+}
+
+/* --- BOUTONS --- */
+.btn{
+    padding:8px 14px;
+    border-radius:14px;
+    font-weight:700;
+    text-decoration:none;
+    color:#fff;
+    border:none;
+    cursor:pointer;
+    font-family:'Orbitron',sans-serif;
+    transition:0.25s;
+}
+
+/* Modifier */
+.edit{
+    background:linear-gradient(145deg,#00ff9c,#00b386);
+    box-shadow:0 0 15px rgba(0,255,156,0.6);
+}
+.edit:hover{
+    transform:scale(1.1) rotate(-2deg);
+    box-shadow:0 0 30px #00ff9c;
+}
+
+/* Supprimer */
+.delete{
+    background:linear-gradient(145deg,#ff4fa3,#b22222);
+    box-shadow:0 0 15px rgba(255,79,163,0.6);
+}
+.delete:hover{
+    transform:scale(1.1) rotate(2deg);
+    box-shadow:0 0 30px #ff4fa3;
+}
+
+/* --- RETOUR --- */
+.back{
+    display:block;
+    text-align:center;
+    margin-top:30px;
+    text-decoration:none;
+    color:#00ffff;
+    font-weight:700;
+    transition:0.25s;
+}
+
+.back:hover{
+    text-shadow:0 0 15px #00ffff;
+}
+
+/* --- CANVAS IA --- */
+canvas{
+    position:absolute;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="neurons"></canvas>
+
+<h2>📚 Catalogue des livres</h2>
+
+<a class="add" href="{{ url_for('main.ajouter_livre') }}">➕ Ajouter un livre</a>
+
+<table>
+<tr>
+    <th>📖 Titre</th>
+    <th>✍️ Auteur</th>
+    <th>🏷️ Catégorie</th>
+    <th>📅 Année</th>
+    <th>🔢 ISBN</th>
+    <th>⚡ Actions</th>
+</tr>
+
+{% for livre in livres %}
+<tr>
+    <td>{{ livre.titre }}</td>
+    <td>{{ livre.auteur }}</td>
+    <td>{{ livre.categorie }}</td>
+    <td>{{ livre.annee }}</td>
+    <td>{{ livre.isbn }}</td>
+    <td>
+        <a class="btn edit" href="{{ url_for('main.modifier_livre', id=livre.id) }}">✏</a>
+        <form method="post" action="{{ url_for('main.supprimer_livre', id=livre.id) }}" style="display:inline;">
+            <button class="btn delete" type="submit">🗑</button>
+        </form>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="6" style="text-align:center;">Aucun livre disponible</td>
+</tr>
+{% endfor %}
+</table>
+
+<a class="back" href="{{ url_for('main.index') }}">⬅ Retour</a>
+
+<script>
+const canvas=document.getElementById("neurons");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+    canvas.width=innerWidth;
+    canvas.height=innerHeight;
+}
+resize();
+addEventListener("resize",resize);
+
+let nodes=[...Array(90)].map(()=>({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    vx:(Math.random()-0.5)*0.6,
+    vy:(Math.random()-0.5)*0.6
+}));
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    nodes.forEach(n=>{
+        n.x+=n.vx;n.y+=n.vy;
+        if(n.x<0||n.x>canvas.width)n.vx*=-1;
+        if(n.y<0||n.y>canvas.height)n.vy*=-1;
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,2,0,Math.PI*2);
+        ctx.fillStyle="#00ffff";
+        ctx.fill();
+        nodes.forEach(m=>{
+            let d=Math.hypot(n.x-m.x,n.y-m.y);
+            if(d<120){
+                ctx.strokeStyle="rgba(0,255,255,0.15)";
+                ctx.beginPath();
+                ctx.moveTo(n.x,n.y);
+                ctx.lineTo(m.x,m.y);
+                ctx.stroke();
+            }
+        });
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>

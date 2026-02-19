@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>✏ Modifier le livre - IA</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:'Orbitron',sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(0,255,255,0.08), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255,0,120,0.08), transparent 40%),
+        linear-gradient(135deg,#120014,#2b001c,#120014);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    overflow:hidden;
+}
+
+/* --- TITRE --- */
+h2{
+    font-size:2.5em;
+    margin-bottom:30px;
+    color:#ff4fa3;
+    text-shadow:0 0 18px #ff4fa3,0 0 35px #8a2be2;
+    animation:floatTitle 3s ease-in-out infinite alternate;
+}
+@keyframes floatTitle{
+    from{transform:translateY(0)}
+    to{transform:translateY(-10px)}
+}
+
+/* --- FORMULAIRE --- */
+form{
+    width:100%;
+    max-width:520px;
+    padding:45px 40px;
+    border-radius:26px;
+    background:linear-gradient(145deg,#1b0012,#2f001f);
+    border:1px solid rgba(255,255,255,0.15);
+    box-shadow:
+        inset 0 0 20px rgba(255,0,100,0.2),
+        0 0 35px rgba(0,255,255,0.15);
+    position:relative;
+    z-index:2;
+}
+
+/* --- LABELS --- */
+label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#ffe6f2;
+}
+
+label[for="titre"]::before{content:"📖";}
+label[for="auteur"]::before{content:"✍️";}
+label[for="categorie"]::before{content:"🏷️";}
+label[for="annee"]::before{content:"📅";}
+label[for="isbn"]::before{content:"🔢";}
+
+/* --- INPUTS --- */
+input{
+    width:100%;
+    padding:14px 16px;
+    margin-bottom:20px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,0.15);
+    background:#120014;
+    color:#fff;
+    font-size:1em;
+    outline:none;
+    transition:.3s;
+}
+
+input:focus{
+    border-color:#00ffff;
+    box-shadow:0 0 18px rgba(0,255,255,0.6);
+    transform:scale(1.02);
+}
+
+/* --- BOUTON --- */
+button{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:20px;
+    background:linear-gradient(145deg,#ff4fa3,#8a2be2);
+    color:#fff;
+    font-weight:700;
+    font-size:1.05em;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 0 25px rgba(255,79,163,0.6);
+}
+
+button:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 45px rgba(0,255,255,0.7);
+}
+
+/* --- RETOUR --- */
+.back{
+    margin-top:25px;
+    text-decoration:none;
+    color:#00ffff;
+    font-weight:700;
+    transition:.25s;
+}
+
+.back:hover{
+    text-shadow:0 0 15px #00ffff;
+}
+
+/* --- CANVAS IA --- */
+canvas{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="neurons"></canvas>
+
+<h2>✏ Modifier le livre</h2>
+
+<form method="post">
+    <label for="titre">Titre</label>
+    <input type="text" id="titre" name="titre" value="{{ livre.titre }}" required>
+
+    <label for="auteur">Auteur</label>
+    <input type="text" id="auteur" name="auteur" value="{{ livre.auteur }}" required>
+
+    <label for="categorie">Catégorie</label>
+    <input type="text" id="categorie" name="categorie" value="{{ livre.categorie }}">
+
+    <label for="annee">Année</label>
+    <input type="number" id="annee" name="annee" value="{{ livre.annee }}">
+
+    <label for="isbn">ISBN</label>
+    <input type="text" id="isbn" name="isbn" value="{{ livre.isbn }}">
+
+    <button type="submit">💾 Enregistrer les modifications</button>
+</form>
+
+<a class="back" href="{{ url_for('main.liste_livres') }}">⬅ Retour</a>
+
+<script>
+const c=document.getElementById("neurons"),x=c.getContext("2d");
+function r(){c.width=innerWidth;c.height=innerHeight}
+r();addEventListener("resize",r);
+let n=[...Array(80)].map(()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5}));
+(function a(){
+x.clearRect(0,0,c.width,c.height);
+n.forEach(p=>{
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<0||p.x>c.width)p.vx*=-1;
+if(p.y<0||p.y>c.height)p.vy*=-1;
+x.fillStyle="#00ffff";
+x.beginPath();x.arc(p.x,p.y,2,0,7);x.fill();
+n.forEach(q=>{
+let d=Math.hypot(p.x-q.x,p.y-q.y);
+if(d<120){
+x.strokeStyle="rgba(0,255,255,.12)";
+x.beginPath();x.moveTo(p.x,p.y);x.lineTo(q.x,q.y);x.stroke();
+}
+});
+});
+requestAnimationFrame(a);
+})();
+</script>
+
+</body>
+</html>
